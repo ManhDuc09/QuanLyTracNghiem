@@ -1,6 +1,9 @@
 package com.app.GUI;
 
+import com.app.DAO.AnswerDAO;
+
 import javax.swing.*;
+import java.sql.SQLException;
 
 public class Main extends JFrame{
     private JButton button1;
@@ -14,7 +17,8 @@ public class Main extends JFrame{
         setSize(300,200);
         setVisible(true);
     }
-    public static void main (String[] arg){
+    public static void main (String[] arg) throws SQLException {
+        AnswerDAO.getAnswers();
         new Main();
     }
 }
