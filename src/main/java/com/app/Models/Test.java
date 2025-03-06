@@ -13,11 +13,11 @@ public class Test {
     private int numDiff;
     private int testLimit;
     private Date testDate;
-    private int testStatus;
+    private boolean testStatus;
 
     // Constructor
     public Test(int testID, String testCode, String testTitle, int testTime, int tpID,
-                int numEasy, int numMedium, int numDiff, int testLimit, Date testDate, int testStatus) {
+                int numEasy, int numMedium, int numDiff, int testLimit, Date testDate, boolean testStatus) {
         this.testID = testID;
         this.testCode = testCode;
         this.testTitle = testTitle;
@@ -112,11 +112,11 @@ public class Test {
         this.testDate = testDate;
     }
 
-    public int getTestStatus() {
+    public boolean getTestStatus() {
         return testStatus;
     }
 
-    public void setTestStatus(int testStatus) {
+    public void setTestStatus(boolean testStatus) {
         this.testStatus = testStatus;
     }
 }
