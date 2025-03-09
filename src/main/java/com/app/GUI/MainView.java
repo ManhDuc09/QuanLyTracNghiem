@@ -26,7 +26,7 @@ public class MainView extends JFrame {
     public MainView() {
         setContentPane(MainPanel);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(700, 700);
+        setSize(850, 700);
         setLocationRelativeTo(null);
         setVisible(true);
         CardLayout layout = new CardLayout();
