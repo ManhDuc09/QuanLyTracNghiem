@@ -32,9 +32,13 @@ public class MainView extends JFrame {
         CardLayout layout = new CardLayout();
         JPanel topic = new Topic();
         JPanel question = new Question();
+        JPanel testPanel = new Test();
+        JPanel userPanel = new User();
         MainContentPanel.setLayout(layout);
         MainContentPanel.add(question, "question");
         MainContentPanel.add(topic, "topic");
+        MainContentPanel.add(testPanel, "test");
+        MainContentPanel.add(userPanel, "user");
         câuHỏiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,6 +49,19 @@ public class MainView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 layout.show(MainContentPanel, "topic");
+            }
+        });
+        đềThiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                layout.show(MainContentPanel, "test");
+            }
+        });
+
+        ngườiDùngButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                layout.show(MainContentPanel, "user");
             }
         });
     }
