@@ -16,6 +16,9 @@ public class Topics {
     public int getTpID(){
         return tpID;
     }
+    public void setTpID(int TpID){this.tpID = tpID;}
+
+    public String getTpTitle(){return tpTitle;}
     public void setTpTitle(String tpTitle){
         this.tpTitle = tpTitle;
     }
