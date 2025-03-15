@@ -31,7 +31,7 @@ public class UserTest extends JFrame {
         setVisible(true);
         CardLayout layout = new CardLayout();
         mainContentPanel.setLayout(layout);
-        mainContentPanel.add(new QuestionPanels(1), "question");
+        mainContentPanel.add(new QuestionPanels(1, 1), "question");
         layout.show(mainContentPanel, "question");
         revalidate();
         repaint();
