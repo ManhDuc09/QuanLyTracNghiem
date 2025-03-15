@@ -45,6 +45,18 @@ public class Questions {
         this.topicID = topicID;
     }
 
+    @Override
+    public String toString() {
+        return "Questions{" +
+                "qID=" + qID +
+                ", qContent='" + qContent + '\'' +
+                ", qPicture='" + qPicture + '\'' +
+                ", topicID=" + topicID +
+                ", qLevel='" + qLevel + '\'' +
+                ", qStatus=" + qStatus +
+                '}';
+    }
+
     public String getqLevel(){
         return qLevel;
     }

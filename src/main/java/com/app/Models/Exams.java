@@ -1,11 +1,13 @@
 package com.app.Models;
 
+import java.util.ArrayList;
+
 public class Exams {
     private String testCode;
     private String exOrder;
     private String exCode;
-    private String quesIDs;
-    public Exams(String testCode, String exOrder, String exCode, String quesIDs) {
+    private ArrayList<Integer> quesIDs;
+    public Exams(String testCode, String exOrder, String exCode, ArrayList<Integer> quesIDs) {
         this.testCode = testCode;
         this.exOrder = exOrder;
         this.exCode = exCode;
@@ -37,11 +39,11 @@ public class Exams {
         this.exCode = exCode;
     }
 
-    public String getQuesIDs() {
+    public ArrayList<Integer> getQuesIDs() {
         return quesIDs;
     }
 
-    public void setQuesIDs(String quesIDs) {
+    public void setQuesIDs(ArrayList<Integer> quesIDs) {
         this.quesIDs = quesIDs;
     }
 }

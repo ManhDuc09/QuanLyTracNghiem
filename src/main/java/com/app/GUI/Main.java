@@ -1,5 +1,7 @@
 package com.app.GUI;
 
+import com.app.GUI.components.UserTest;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -62,7 +64,9 @@ public class Main extends JFrame {
     public static void main(String[] args) {
 
         //SwingUtilities.invokeLater(Main::new);
-        UserMainView main = new UserMainView();
-        //AdminMainView main2 = new AdminMainView();
+        //UserMainView main = new UserMainView();
+       //AdminMainView main2 = new AdminMainView();
+       UserTest main = new UserTest();
+
     }
 }
