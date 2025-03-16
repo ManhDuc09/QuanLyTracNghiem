@@ -31,37 +31,43 @@ public class QuestionPanels extends JPanel {
         ArrayList<Answer> answers = AnswerDAO.getAnswersByqId(id);
 
         panel1 = new JPanel();
-
-        // Define FormLayout with vertical spacing
-        StringBuilder rowSpec = new StringBuilder("10dlu, pref, 10dlu, pref, 20dlu"); // Space before question
-        for (int i = 0; i < answers.size(); i++) {
-            rowSpec.append(", 50dlu, pref"); // Add 10dlu spacing before each answer
-        }
-
         panel1.setLayout(new FormLayout(
-                "15dlu, pref, 15dlu",  // Horizontal layout
-                rowSpec.toString()      // Dynamically generated vertical layout
+                "30dlu, 10dlu, pref:grow, 30dlu",  // More columns for spacing
+                "10dlu, pref, 10dlu, pref, 20dlu" + ", 50dlu, pref".repeat(answers.size())
         ));
 
         CellConstraints cc = new CellConstraints();
 
+        // Define fonts
+        Font questionFont = new Font("Arial", Font.BOLD, 18); // Bigger & bold question
+        Font answerFont = new Font("Arial", Font.PLAIN, 16);  // Larger answer text
+
         // Add question title and content
-        panel1.add(new JLabel("Question " + qIndex), cc.xy(2, 2));
-        panel1.add(new JLabel(question.getqContent()), cc.xy(2, 4));
+        JLabel questionLabel = new JLabel("Question " + qIndex);
+        questionLabel.setFont(questionFont);
+        panel1.add(questionLabel, cc.xy(3, 2)); // Shifted to the right
+
+        JLabel contentLabel = new JLabel(question.getqContent());
+        contentLabel.setFont(questionFont);
+        panel1.add(contentLabel, cc.xy(3, 4)); // Shifted to the right
 
         int index = 6; // Start at row 6 for answers
         ButtonGroup answerGroup = new ButtonGroup();
 
         for (Answer answer : answers) {
             JRadioButton answerButton = new JRadioButton(answer.getaContent());
+            answerButton.setFont(answerFont); // Apply font to radio buttons
             answerGroup.add(answerButton);
-            panel1.add(answerButton, cc.xy(2, index));
-            index += 2; // Move to the next row, skipping a row for spacing (10dlu)
+            panel1.add(answerButton, cc.xy(3, index)); // Shifted to the right
+            index += 2;
         }
 
         panel1.revalidate();
         panel1.repaint();
     }
+
+
+
 
 
 

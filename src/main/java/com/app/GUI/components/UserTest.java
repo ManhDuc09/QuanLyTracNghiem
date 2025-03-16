@@ -8,9 +8,9 @@ import com.jgoodies.forms.layout.*;
 
 public class UserTest extends JFrame {
     private JPanel contentPanel;
-    private JButton button1;
-    private JButton button2;
-    private JButton button3;
+    private JButton previousButton;
+    private JButton nextButton;
+    private JButton submitButton;
     private JPanel mainContentPanel;
     private JPanel panel;
     private JPanel panel_1;
@@ -27,7 +27,7 @@ public class UserTest extends JFrame {
 
     public UserTest() {
         setContentPane(contentPanel);
-        setSize(700, 800);
+        setSize(500, 600);
         setVisible(true);
         CardLayout layout = new CardLayout();
         mainContentPanel.setLayout(layout);
@@ -59,20 +59,20 @@ public class UserTest extends JFrame {
      */
     private void $$$setupUI$$$() {
         contentPanel = new JPanel();
-        contentPanel.setLayout(new FormLayout("right:100px:noGrow,left:6dlu:noGrow,fill:100px:noGrow,left:4dlu:noGrow,fill:100px:noGrow", "center:261px:grow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
+        contentPanel.setLayout(new FormLayout("right:100px:noGrow,left:5px:noGrow,fill:300px:noGrow,fill:100px:noGrow", "center:261px:grow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
+        nextButton = new JButton();
+        nextButton.setText("Next");
+        CellConstraints cc = new CellConstraints();
+        contentPanel.add(nextButton, cc.xy(4, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
+        submitButton = new JButton();
+        submitButton.setText("Submit");
+        contentPanel.add(submitButton, cc.xyw(2, 3, 2, CellConstraints.CENTER, CellConstraints.DEFAULT));
+        previousButton = new JButton();
+        previousButton.setText("Previous");
+        contentPanel.add(previousButton, cc.xy(1, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(new CardLayout(0, 0));
-        CellConstraints cc = new CellConstraints();
-        contentPanel.add(mainContentPanel, cc.xyw(1, 1, 5));
-        button2 = new JButton();
-        button2.setText("Button");
-        contentPanel.add(button2, cc.xy(5, 3));
-        button3 = new JButton();
-        button3.setText("Button");
-        contentPanel.add(button3, cc.xy(3, 3));
-        button1 = new JButton();
-        button1.setText("Button");
-        contentPanel.add(button1, cc.xy(1, 3, CellConstraints.CENTER, CellConstraints.DEFAULT));
+        contentPanel.add(mainContentPanel, cc.xyw(1, 1, 3));
     }
 
     /**

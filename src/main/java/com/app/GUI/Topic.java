@@ -180,7 +180,6 @@ public class Topic extends JPanel {
 
     private void loadTopics() {
         try {
-            // Gọi Service thay vì DAO
             ArrayList<Topics> topicsList = TopicSevice.getTopics();
             DefaultTableModel model = new DefaultTableModel(
                     new String[]{"ID", "Tên chủ đề", "Chủ đề cha", "Trạng thái"}, 0

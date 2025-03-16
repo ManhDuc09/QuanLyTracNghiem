@@ -50,15 +50,16 @@ public class TopicDAO {
 
     public static boolean deleteTopics(int tpID) throws SQLException{
         String query = "DELETE FROM topics WHERE tpID = ?";
+        String resetAutoIncrement = "ALTER TABLE topics AUTO_INCREMENT = 1";
         //String resetQuery = "SET @num = 0; UPDATE topics SET tpID = @num := (@num+1); ALTER TABLE topics AUTO_INCREMENT = 1;";
         try(Connection connection = DatabaseConnection.getConnection();
             PreparedStatement stmt = connection.prepareStatement(query)){
             stmt.setInt(1, tpID);
             int row = stmt.executeUpdate();
 
-            if (isTableEmpty(connection)) {
+            if (row > 0) {
                 try (Statement resetStmt = connection.createStatement()) {
-                    resetStmt.execute("ALTER TABLE topics AUTO_INCREMENT = 1;");
+                    resetStmt.executeUpdate(resetAutoIncrement);
                 }
             }
             return row > 0;
@@ -86,6 +87,22 @@ public class TopicDAO {
             return false;
         }
     }
+
+    public static boolean isTopicExists(int topicID) {
+        String query = "SELECT COUNT(*) FROM topics WHERE tpID = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, topicID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Nếu số lượng > 0 thì tồn tại
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Mặc định trả về false nếu có lỗi
+    }
+
     public static boolean updateTopic(int tpID, String newTitle, int newParent) throws SQLException{
         String query = "UPDATE topics SET tpTitle = ?, tpParent = ? WHERE tpID = ?";
 

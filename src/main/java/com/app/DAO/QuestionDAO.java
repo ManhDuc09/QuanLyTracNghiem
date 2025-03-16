@@ -1,6 +1,7 @@
 package com.app.DAO;
 
 import com.app.Database.DatabaseConnection;
+import com.app.Models.Answer;
 import com.app.Models.Questions;
 
 import java.sql.*;
@@ -41,11 +42,11 @@ public class QuestionDAO {
         try (Connection connection = DatabaseConnection.getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
-            if (!rs.next()) {
-                System.out.println("Empty");
-                return null;
-
-            }
+//            if (!rs.next()) {
+//                System.out.println("Empty");
+//                return null;
+//
+//            }
 
             while (rs.next()) {
                 int qId = rs.getInt("qID");
@@ -63,10 +64,34 @@ public class QuestionDAO {
         return arr;
 
     }
+    public static ArrayList<Answer> getAnswersByQuestionID(int qID) throws SQLException {
+        String query = "SELECT * FROM answers WHERE qID = ? AND awStatus = 1"; // Chỉ lấy câu trả lời đang active
+        ArrayList<Answer> answersList = new ArrayList<>();
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setInt(1, qID);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int awID = rs.getInt("awID");
+                String awContent = rs.getString("awContent");
+                String awPictures = rs.getString("awPictures");
+                boolean isRight = rs.getBoolean("isRight");
+                boolean awStatus = rs.getBoolean("awStatus");
+
+                Answer answer = new Answer(awID, qID, awContent, awPictures, isRight, awStatus);
+                answersList.add(answer);
+            }
+        }
+        return answersList;
+    }
+
 
     public static boolean addQuestion(Questions questions) throws SQLException {
 
-        String query = "INSERT INTO questions (qContent, qPictures, qTopicID, qLevel, qStatus) VALUES (?,?,?,?,?)";
+        String query = "INSERT INTO questions (qContent, qPictures, qTopicID, qLevel, qStatus) VALUES (?,?,?,?,1)";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
 
@@ -74,20 +99,63 @@ public class QuestionDAO {
             stmt.setString(2, questions.getqPicture());
             stmt.setInt(3, questions.getTopicID());
             stmt.setString(4, questions.getqLevel());
-            stmt.setBoolean(5, questions.getqStatus());
 
             int rows = stmt.executeUpdate();
             return rows > 0;
         }
     }
+    public static boolean addAnswer(Answer answer) throws SQLException {
+        String query = "INSERT INTO answers (qID, awContent, awPictures, isRight, awStatus) VALUES (?, ?, ?, ?, 1)";
 
-    public static boolean deleteQuestion(int qId) throws Exception {
-        String query = "DELETE FROM questions WHERE qID = ?";
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, qId);
-            int row = stmt.executeUpdate();
-            return row > 0;
+
+            stmt.setInt(1, answer.getqId());
+            stmt.setString(2, answer.getaContent());
+            stmt.setString(3, answer.getaPicture());
+            stmt.setInt(4, answer.isRight() ? 1 : 0);
+
+
+            int rows = stmt.executeUpdate();
+            return rows > 0;
         }
     }
+    public static int getLastInsertedQuestionID() throws SQLException {
+        String query = "SELECT qID FROM questions ORDER BY qID DESC LIMIT 1";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                return rs.getInt("qID");
+            }
+        }
+        return -1; // Trả về -1 nếu không tìm thấy
+    }
+
+
+
+    public static boolean deleteQuestion(int qId) throws SQLException {
+        // 🟢 Xóa tất cả câu trả lời trước
+        boolean deletedAnswers = AnswerDAO.deleteAnswersByQuestionId(qId);
+
+        // 🟢 Sau khi xóa đáp án thành công, mới tiếp tục xóa câu hỏi
+        String query = "DELETE FROM questions WHERE qID = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setInt(1, qId);
+            int row = stmt.executeUpdate();
+            return row > 0; // Trả về true nếu xóa thành công
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+
 }
