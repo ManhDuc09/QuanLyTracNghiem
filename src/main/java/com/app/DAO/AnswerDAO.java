@@ -2,6 +2,7 @@ package com.app.DAO;
 
 import com.app.Database.DatabaseConnection;
 import com.app.Models.Answer;
+import com.app.Models.Questions;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -87,6 +88,34 @@ public class AnswerDAO {
             e.printStackTrace();
             return false;
         }
+    public static ArrayList<Answer> getAnswersByqId(int id) {
+            String sql = "SELECT * FROM answers WHERE qId = ?";
+        ArrayList<Answer> answers = new ArrayList<Answer>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int aId = rs.getInt("awId");
+                int qId = rs.getInt("qId");
+                String aContent = rs.getString("awContent");
+                String aPicture = rs.getString("awPictures");
+                Boolean isRight = rs.getBoolean("isRight");
+                Boolean aStatus = rs.getBoolean("awStatus");
+
+                Answer temp =  new Answer(aId , qId , aContent , aPicture ,aStatus , isRight);
+                System.out.println(temp);
+                answers.add(temp);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return answers;
+
+    }
     }
 
 }

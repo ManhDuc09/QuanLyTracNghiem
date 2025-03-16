@@ -66,4 +66,16 @@ public class Answer {
     public void setRight(boolean right) {
         isRight = right;
     }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "aId=" + aId +
+                ", qId=" + qId +
+                ", aContent='" + aContent + '\'' +
+                ", aPicture='" + aPicture + '\'' +
+                ", aStatus=" + aStatus +
+                ", isRight=" + isRight +
+                '}';
+    }
 }

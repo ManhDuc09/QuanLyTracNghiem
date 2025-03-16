@@ -8,6 +8,34 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class QuestionDAO {
+    public static Questions getQuestionById(int id){
+        String sql = "SELECT * FROM questions WHERE qId = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Questions temp = new Questions(
+                        rs.getInt("qID"),
+                        rs.getString("qContent"),
+                        rs.getString("qPictures"),
+                        rs.getInt("qTopicID"),
+                        rs.getString("qLevel"),
+                        rs.getBoolean("qStatus")
+                );
+                System.out.println(temp);
+                return temp;
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
     public static ArrayList<Questions> getQuestions() throws SQLException {
         String query = "SELECT * FROM questions";
         ArrayList<Questions> arr = new ArrayList<>();
