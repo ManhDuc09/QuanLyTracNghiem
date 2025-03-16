@@ -2,7 +2,7 @@ package com.app.Models;
 
 import java.util.ArrayList;
 
-public class Exams {
+public class    Exams {
     private String testCode;
     private String exOrder;
     private String exCode;

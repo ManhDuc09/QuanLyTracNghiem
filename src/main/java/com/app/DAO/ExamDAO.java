@@ -3,6 +3,7 @@ package com.app.DAO;
 import com.app.Database.DatabaseConnection;
 import com.app.Models.Exams;
 import com.app.Models.Users;
+import java.util.stream.Collectors;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -60,4 +61,71 @@ public class ExamDAO {
 
 
     }
+
+
+    public static void insertExam(String testCode, String exOrder, String exCode, ArrayList<Integer> questionIds) {
+        String query = "INSERT INTO exams (testCode, exOrder, exCode, ex_quesIDs) VALUES (?, ?, ?, ?)";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            // Convert ArrayList<Integer> to CSV String using normal loop
+            StringBuilder csvString = new StringBuilder();
+            for (int i = 0; i < questionIds.size(); i++) {
+                csvString.append(questionIds.get(i));
+                if (i < questionIds.size() - 1) {
+                    csvString.append(","); // Add comma except for the last element
+                }
+            }
+
+            // Set parameters
+            pstmt.setString(1, testCode);
+            pstmt.setString(2, exOrder);
+            pstmt.setString(3, exCode);
+            pstmt.setString(4, csvString.toString());  // Store as CSV string
+
+            // Execute update
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println(" Exam inserted successfully!");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error inserting exam: " + e.getMessage());
+        }
+    }
+    public static Exams getExamById(String exCode) {
+        String query = "SELECT * FROM exams WHERE testCode = ?";
+        Exams exam = null;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            pstmt.setString(1, exCode); // Set exCode parameter
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String testCode = rs.getString("testCode");
+                    String exOrder = rs.getString("exOrder");
+                    String exQuesIDs = rs.getString("ex_quesIDs"); // Stored as CSV
+
+                    // Convert CSV String back to ArrayList<Integer>
+                    ArrayList<Integer> questionIds = new ArrayList<>();
+                    if (exQuesIDs != null && !exQuesIDs.isEmpty()) {
+                        String[] idsArray = exQuesIDs.split(",");
+                        for (String id : idsArray) {
+                            questionIds.add(Integer.parseInt(id.trim())); // Trim spaces and convert to int
+                        }
+                    }
+
+                    exam = new Exams(testCode, exOrder, exCode, questionIds);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println(" Error fetching exam: " + e.getMessage());
+        }
+
+        return exam;
+    }
+
+
 }
