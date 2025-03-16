@@ -39,6 +39,11 @@ public class TopicSevice {
 //    public static int getNextAvailableID() throws Exception{
 //        return TopicDAO.getNextAvailableID();
 //    }
+    public static boolean isTopicExists(int topicID) throws SQLException{
+
+            return TopicDAO.isTopicExists(topicID);
+
+    }
 
     public static boolean updateTopic(int tpID, String newTitle, int newParent) {
         try {

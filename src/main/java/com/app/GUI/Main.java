@@ -62,7 +62,7 @@ public class Main extends JFrame {
     public static void main(String[] args) {
 
         //SwingUtilities.invokeLater(Main::new);
-        UserMainView main = new UserMainView();
-        //AdminMainView main2 = new AdminMainView();
+        //UserMainView main = new UserMainView();
+        AdminMainView mainView = new AdminMainView();
     }
 }
