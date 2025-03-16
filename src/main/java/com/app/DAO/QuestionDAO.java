@@ -135,25 +135,78 @@ public class QuestionDAO {
 
 
 
-    public static boolean deleteQuestion(int qId) throws SQLException {
-        // 🟢 Xóa tất cả câu trả lời trước
-        boolean deletedAnswers = AnswerDAO.deleteAnswersByQuestionId(qId);
+//    public static boolean deleteQuestion(int qId) throws SQLException {
+//        //Xóa tất cả câu trả lời trước
+//        boolean deletedAnswers = AnswerDAO.deleteAnswersByQuestionId(qId);
+//
+//        //Sau khi xóa đáp án thành công, mới tiếp tục xóa câu hỏi
+//        String query = "DELETE FROM questions WHERE qID = ?";
+//        //String resetAutoIncrement = "ALTER TABLE questions AUTO_INCREMENT = (SELECT MAX(qID) + 1 FROM questions)";
+//
+//        try (Connection connection = DatabaseConnection.getConnection();
+//             PreparedStatement stmt = connection.prepareStatement(query)) {
+//
+//            stmt.setInt(1, qId);
+//            int row = stmt.executeUpdate();
+////            if (row > 0) {
+////                stmt.executeUpdate(resetAutoIncrement);
+////            }
+//            return row > 0;
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
-        // 🟢 Sau khi xóa đáp án thành công, mới tiếp tục xóa câu hỏi
-        String query = "DELETE FROM questions WHERE qID = ?";
+    public static boolean deleteQuestion(int qId) throws SQLException {
+        String deleteQuery = "DELETE FROM questions WHERE qID = ?";
+        String getMaxID = "SELECT MAX(qID) FROM questions";  // Lấy ID lớn nhất còn lại
+        String resetAutoIncrement = "ALTER TABLE questions AUTO_INCREMENT = ?"; // Đặt lại ID mới
 
         try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
+             PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery);
+             Statement getMaxStmt = connection.createStatement();
+             PreparedStatement resetStmt = connection.prepareStatement(resetAutoIncrement)) {
 
-            stmt.setInt(1, qId);
-            int row = stmt.executeUpdate();
-            return row > 0; // Trả về true nếu xóa thành công
+            // Xóa câu hỏi
+            deleteStmt.setInt(1, qId);
+            int rowsAffected = deleteStmt.executeUpdate();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            if (rowsAffected > 0) {
+                // Lấy giá trị ID lớn nhất hiện có
+                ResultSet rs = getMaxStmt.executeQuery(getMaxID);
+                int maxID = 1; // Nếu bảng trống, đặt về 1
+                if (rs.next() && rs.getInt(1) > 0) {
+                    maxID = rs.getInt(1) + 1; // Lấy ID lớn nhất + 1
+                }
+
+                // Reset AUTO_INCREMENT
+                resetStmt.setInt(1, maxID);
+                resetStmt.executeUpdate();
+            }
+
+            return rowsAffected > 0;
         }
     }
+
+    public static boolean updateQuestion(Questions questions) throws SQLException{
+        String query = "UPDATE questions SET qContent = ?, qPictures = ?, qTopicID = ?, qLevel = ? WHERE qID = ?";
+
+        try(Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(query)){
+
+            stmt.setString(1,questions.getqContent());
+            stmt.setString(2,questions.getqPicture());
+            stmt.setInt(3,questions.getTopicID());
+            stmt.setString(4,questions.getqLevel());
+            stmt.setInt(5,questions.getqID());
+
+            int row = stmt.executeUpdate();
+            return row > 0;
+        }
+    }
+
 
 
 

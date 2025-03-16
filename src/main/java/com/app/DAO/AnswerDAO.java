@@ -74,22 +74,74 @@ public class AnswerDAO {
             return rows > 0;
         }
     }
+//    public static boolean deleteAnswersByQuestionId(int qId) throws SQLException {
+//        String query = "DELETE FROM answers WHERE qID = ?";
+//        //String resetAutoIncrement = "ALTER TABLE answers AUTO_INCREMENT = (SELECT MAX(awID) + 1 FROM answers)";
+//
+//        try (Connection connection = DatabaseConnection.getConnection();
+//             PreparedStatement stmt = connection.prepareStatement(query)) {
+//
+//            stmt.setInt(1, qId);
+//            int row = stmt.executeUpdate();
+////            if (row > 0) {
+////                stmt.executeUpdate(resetAutoIncrement);
+////            }
+//            return row > 0;
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//
+//    }
+
     public static boolean deleteAnswersByQuestionId(int qId) throws SQLException {
-        String query = "DELETE FROM answers WHERE qID = ?";
+        String deleteQuery = "DELETE FROM answers WHERE qID = ?";
+        String getMaxID = "SELECT MAX(awID) FROM answers";
+        String resetAutoIncrement = "ALTER TABLE answers AUTO_INCREMENT = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery);
+             Statement getMaxStmt = connection.createStatement();
+             PreparedStatement resetStmt = connection.prepareStatement(resetAutoIncrement)) {
+
+            deleteStmt.setInt(1, qId);
+            int rowsAffected = deleteStmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                ResultSet rs = getMaxStmt.executeQuery(getMaxID);
+                int maxID = 1;
+                if (rs.next() && rs.getInt(1) > 0) {
+                    maxID = rs.getInt(1) + 1;
+                }
+
+                resetStmt.setInt(1, maxID);
+                resetStmt.executeUpdate();
+            }
+
+            return rowsAffected > 0;
+        }
+    }
+
+    public static boolean updateAnswer(Answer answer) throws SQLException {
+        String query = "UPDATE answers SET awContent = ?, awPictures = ?, isRight = ? WHERE awID = ?";
 
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
 
-            stmt.setInt(1, qId);
-            int row = stmt.executeUpdate();
-            return row > 0; // Trả về true nếu có đáp án bị xóa
+            stmt.setString(1, answer.getaContent());  // Nội dung câu trả lời
+            stmt.setString(2, answer.getaPicture());  // Đường dẫn ảnh
+            stmt.setBoolean(3, answer.isRight());     // Đúng/Sai
+            stmt.setInt(4, answer.getaId());          // ID câu trả lời cần sửa
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
         }
+    }
+
+
     public static ArrayList<Answer> getAnswersByqId(int id) {
-            String sql = "SELECT * FROM answers WHERE qId = ?";
+        String sql = "SELECT * FROM answers WHERE qId = ?";
         ArrayList<Answer> answers = new ArrayList<Answer>();
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -115,7 +167,6 @@ public class AnswerDAO {
 
         return answers;
 
-    }
     }
 
 }

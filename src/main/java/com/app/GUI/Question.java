@@ -166,6 +166,73 @@ public class Question extends JPanel {
             }
         });
 
+        sửaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table1.getSelectedRow(); // Lấy hàng đang chọn
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn một câu hỏi để sửa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                try {
+                    // Lấy ID câu hỏi từ bảng
+                    int qId = (int) table1.getValueAt(selectedRow, 0);
+
+                    // Lấy nội dung câu hỏi
+                    String content = textArea1.getText().trim();
+                    if (content.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Nội dung câu hỏi không được để trống!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Lấy đường dẫn ảnh (hiện tại giả định, có thể cập nhật từ nút tải ảnh)
+                    String imagePath = "no_image.png";
+
+                    // Lấy ID chủ đề
+                    int topicID = comboBox2.getSelectedIndex();
+                    if (topicID == 0) {
+                        JOptionPane.showMessageDialog(null, "Vui lòng chọn chủ đề!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Kiểm tra chủ đề tồn tại không
+                    if (!TopicSevice.isTopicExists(topicID)) {
+                        JOptionPane.showMessageDialog(null, "Chủ đề không tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Lấy mức độ từ comboBox1
+                    String level = comboBox1.getSelectedItem().toString();
+
+                    // Tạo đối tượng `Questions`
+                    Questions updatedQuestion = new Questions(qId, content, imagePath, topicID, level, true);
+
+                    // Gọi Service để cập nhật câu hỏi
+                    boolean questionUpdated = QuestionService.updateQuestion(updatedQuestion);
+
+                    // Nếu cập nhật câu hỏi thành công, cập nhật câu trả lời
+                    if (questionUpdated) {
+                        // Xóa câu trả lời cũ
+                        AnswerService.deleteAnswersByQuestionId(qId);
+
+                        // Thêm câu trả lời mới
+                        addAnswers(qId);
+
+                        JOptionPane.showMessageDialog(null, "Cập nhật câu hỏi & câu trả lời thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        loadQuestions(); // Load lại bảng câu hỏi
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Cập nhật câu hỏi thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Lỗi khi cập nhật: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+
+
 
     }
 
@@ -259,6 +326,7 @@ public class Question extends JPanel {
                     int selectedRow = table1.getSelectedRow();
                     if (selectedRow != -1) {
                         int qID = (int) model.getValueAt(selectedRow, 0);
+                        loadQuestionToForm(qID);
                         loadAnswers(qID); // Gọi hàm hiển thị câu trả lời
                     }
                 }
@@ -266,6 +334,20 @@ public class Question extends JPanel {
 
         } catch (Exception e) {
             System.out.println("Lỗi tải câu hỏi!");
+            e.printStackTrace();
+        }
+    }
+
+    private void loadQuestionToForm(int qID) {
+        try {
+            Questions question = QuestionService.getQuestionById(qID);
+            if (question != null) {
+                textArea1.setText(question.getqContent());  // Hiển thị nội dung câu hỏi
+                textField1.setText(question.getqPicture()); // Hiển thị ảnh (nếu có)
+                comboBox2.setSelectedItem(question.getTopicID()); // Chủ đề
+                comboBox1.setSelectedItem(question.getqLevel()); // Mức độ
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

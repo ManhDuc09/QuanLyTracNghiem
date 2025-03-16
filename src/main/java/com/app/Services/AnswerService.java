@@ -19,4 +19,8 @@ public class AnswerService {
     public static boolean deleteAnswersByQuestionId(int qId) throws SQLException{
         return AnswerDAO.deleteAnswersByQuestionId(qId);
     }
+
+    public static boolean updateAnswer(Answer answer) throws SQLException {
+        return AnswerDAO.updateAnswer(answer);
+    }
 }

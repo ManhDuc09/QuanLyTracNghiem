@@ -11,6 +11,9 @@ public class QuestionService {
     public static ArrayList<Questions> getQuestions() throws Exception{
         return QuestionDAO.getQuestions();
     }
+    public static Questions getQuestionById(int qID) throws SQLException {
+        return QuestionDAO.getQuestionById(qID);
+    }
 
     public static boolean addQuestion(Questions question) throws Exception {
         return QuestionDAO.addQuestion(question);
@@ -28,6 +31,10 @@ public class QuestionService {
         } else {
             return false; // Nếu xóa câu trả lời thất bại, không xóa câu hỏi
         }
+    }
+
+    public static boolean updateQuestion(Questions question) throws SQLException {
+        return QuestionDAO.updateQuestion(question);
     }
 
 }
