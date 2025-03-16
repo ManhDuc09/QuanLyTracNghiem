@@ -2,6 +2,9 @@ package com.app.GUI.components;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 
 import com.app.Models.Exams;
 import com.jgoodies.forms.layout.*;
@@ -23,24 +26,43 @@ public class UserTest extends JFrame {
     private JRadioButton rdbtnNewRadioButton;
     private JRadioButton rdbtnNewRadioButton_1;
     private JTextField textField;
-    private Exams exam;
+    private Exams currentExam;
+    private int currentIndex = 0;
 
-    public UserTest() {
+    public UserTest(Exams exam) {
+        currentExam = exam;
         setContentPane(contentPanel);
         setSize(500, 600);
         setVisible(true);
         CardLayout layout = new CardLayout();
         mainContentPanel.setLayout(layout);
-        mainContentPanel.add(new QuestionPanels(1, 1), "question");
-        layout.show(mainContentPanel, "question");
+        loadQuestionsPanels();
         revalidate();
         repaint();
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                layout.next(mainContentPanel);
+            }
+        });
+        previousButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                layout.previous(mainContentPanel);
+            }
+        });
     }
 
     private void loadQuestionsPanels() {
-
-
+        int index = 1;
+        for (int i : currentExam.getQuesIDs()) {
+            mainContentPanel.add(new QuestionPanels(i, index), "question" + index);
+            index++;
+        }
+        mainContentPanel.revalidate();
+        mainContentPanel.repaint();
     }
+
 
 
     {

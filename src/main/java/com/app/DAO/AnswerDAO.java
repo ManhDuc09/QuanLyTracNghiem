@@ -88,6 +88,7 @@ public class AnswerDAO {
             e.printStackTrace();
             return false;
         }
+    }
     public static ArrayList<Answer> getAnswersByqId(int id) {
             String sql = "SELECT * FROM answers WHERE qId = ?";
         ArrayList<Answer> answers = new ArrayList<Answer>();
@@ -116,7 +117,7 @@ public class AnswerDAO {
         return answers;
 
     }
-    }
+
 
 }
 
