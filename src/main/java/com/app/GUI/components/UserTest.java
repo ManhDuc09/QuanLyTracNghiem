@@ -5,8 +5,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import com.app.DAO.AnswerDAO;
+import com.app.DAO.ResultDAO;
 import com.app.Models.Exams;
+import com.app.Models.Result;
 import com.jgoodies.forms.layout.*;
 
 public class UserTest extends JFrame {
@@ -28,6 +33,7 @@ public class UserTest extends JFrame {
     private JTextField textField;
     private Exams currentExam;
     private int currentIndex = 0;
+    private ArrayList<QuestionPanels> questionPanels = new ArrayList<>();
 
     public UserTest(Exams exam) {
         currentExam = exam;
@@ -51,18 +57,56 @@ public class UserTest extends JFrame {
                 layout.previous(mainContentPanel);
             }
         });
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
     }
 
     private void loadQuestionsPanels() {
         int index = 1;
         for (int i : currentExam.getQuesIDs()) {
-            mainContentPanel.add(new QuestionPanels(i, index), "question" + index);
+            QuestionPanels qp = new QuestionPanels(i, index);
+            questionPanels.add(qp);
+            mainContentPanel.add(qp);
             index++;
         }
         mainContentPanel.revalidate();
         mainContentPanel.repaint();
     }
+    private ArrayList<Integer>  getAnswers(){
+       ArrayList<Integer> answers = new ArrayList<>();
+        for (QuestionPanels qp : questionPanels) {
+            int selectedAnswer = qp.getSelectedAnswer();
+            if (selectedAnswer == -1) {
+                answers.add(0);
+            }
+            else {
+                answers.add(selectedAnswer);
+            }
+        }
+        return answers;
+    }
+    private void createResults(ArrayList<Integer> answers){
+        StringBuilder result = new StringBuilder();
+        int correctAnswer = 0;
+        for (int value : answers) {
+            if (result.length() > 0) {
+                result.append(",");
+            }
+            result.append(value);
+            if (AnswerDAO.getAnswerById(value).isRight()){
+                correctAnswer++;
+            }
+        }
+        double mark =  (double) correctAnswer / answers.size();
+        System.out.println(result.toString());
+        int rsNum = ResultDAO.getLatestRsNum(1,currentExam.getExCode());
 
+
+    }
 
 
     {

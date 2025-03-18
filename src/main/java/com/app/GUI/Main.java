@@ -69,7 +69,8 @@ public class Main extends JFrame {
         //SwingUtilities.invokeLater(Main::new);
         //UserMainView main = new UserMainView();
         //AdminMainView mainView = new AdminMainView();
-        ArrayList<Integer> list = new ArrayList<Integer>();
+
+      ArrayList<Integer> list = new ArrayList<Integer>();
         list.add(1);
         list.add(2);
         UserTest user = new UserTest(new Exams("123" , "123","213123" , list));

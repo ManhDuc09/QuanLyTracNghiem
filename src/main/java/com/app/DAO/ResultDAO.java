@@ -38,4 +38,45 @@ public class ResultDAO {
         return arr;
 
     }
+    public static int getLatestRsNum(int userID, String exCode)  {
+        String query = "SELECT MAX(rs_num) FROM result WHERE userID = ? AND exCode = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setInt(1, userID);
+            stmt.setString(2, exCode);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int rsNum = rs.getInt(1);
+                    return rs.wasNull() ? -1 : rsNum; // Handle case where MAX(rs_num) is NULL
+                }
+            }
+        }
+        catch (SQLException e) {}
+
+        return -1;
+    }
+    public static boolean insertResult(Result result)  {
+        String query = "INSERT INTO result (rs_num, userID, exCode, rs_answers, rs_mark, rs_date) VALUES (?, ?, ?, ?, ?, ?)";
+
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setInt(1, result.getRsNum());
+            stmt.setInt(2, result.getUserID());
+            stmt.setString(3, result.getExCode());
+            stmt.setString(4, result.getRsAnswer());
+            stmt.setBigDecimal(5, result.getRsMark());
+            stmt.setDate(6, result.getRsDate());
+
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0; // Returns true if insert was successful
+        }
+        catch (SQLException e){
+            return false;
+        }
+    }
 }

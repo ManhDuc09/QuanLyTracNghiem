@@ -168,6 +168,33 @@ public class AnswerDAO {
         return answers;
 
     }
+    public static Answer getAnswerById(int id) {
+        String sql = "SELECT * FROM answers WHERE awId = ?"; // Ensure column name is correct
+        Answer answer = null;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) { // Fetch only one row
+                int awId = rs.getInt("awId"); // Ensure column names match your database
+                int qId = rs.getInt("qId");
+                String awContent = rs.getString("awContent");
+                String awPicture = rs.getString("awPictures");
+                boolean isRight = rs.getBoolean("isRight");
+                boolean awStatus = rs.getBoolean("awStatus");
+
+                answer = new Answer(awId, qId, awContent, awPicture, awStatus, isRight);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Proper error handling
+        }
+
+        return answer; // Return null if no record found
+    }
+
 
 }
 
